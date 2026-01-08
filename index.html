@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Educational Keylogger Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        background: #0a0a0a;
+        color: #00ffcc;
+        font-family: "Courier New", monospace;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 95%;
+        max-width: 900px;
+        background: #111;
+        border: 2px solid #00ffcc;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 20px #00ffcc55;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    input, textarea, button {
+        width: 100%;
+        background: #000;
+        color: #00ffcc;
+        border: 1px solid #00ffcc;
+        padding: 10px;
+        margin-top: 10px;
+        font-family: inherit;
+    }
+
+    textarea {
+        height: 120px;
+        resize: none;
+    }
+
+    button {
+        background: #00ffcc;
+        color: #000;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #00ccaa;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .warning {
+        color: #ff5555;
+        text-align: center;
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+    .log {
+        background: #000;
+        border: 1px solid #00ffcc;
+        height: 150px;
+        overflow-y: auto;
+        padding: 10px;
+        font-size: 13px;
+        margin-top: 10px;
+    }
+
+    .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SECTION -->
+<div class="container" id="loginBox">
+    <h1>🔐 Login</h1>
+    <p style="text-align:center">Demo Credentials: <b>admin / admin</b></p>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+
+    <div class="checkbox">
+        <input type="checkbox" id="consent">
+        <label for="consent">
+            I give consent for keystrokes to be logged<br>
+            <small>(Only inside this educational demo)</small>
+        </label>
+    </div>
+
+    <button onclick="login()">Login</button>
+    <p class="warning" id="loginError"></p>
+</div>
+
+<!-- MAIN APP -->
+<div class="container hidden" id="appBox">
+    <h1>Educational Keylogger Demo</h1>
+
+    <div class="warning">
+        ⚠ Keystrokes are logged ONLY inside the box below.<br>
+        No background or system-wide logging.
+    </div>
+
+    <textarea id="inputBox" placeholder="Type here for demonstration..."></textarea>
+
+    <div class="log" id="logBox"></div>
+
+    <button onclick="clearLogs()">Clear Logs</button>
+</div>
+
+<script>
+    function login() {
+        const u = document.getElementById("username").value;
+        const p = document.getElementById("password").value;
+        const consent = document.getElementById("consent").checked;
+        const error = document.getElementById("loginError");
+
+        if (!consent) {
+            error.textContent = "❌ Consent is required.";
+            return;
+        }
+
+        if (u === "admin" && p === "admin") {
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("appBox").classList.remove("hidden");
+        } else {
+            error.textContent = "❌ Invalid credentials.";
+        }
+    }
+
+    const inputBox = document.getElementById("inputBox");
+    const logBox = document.getElementById("logBox");
+
+    inputBox.addEventListener("keydown", (e) => {
+        let key = e.key;
+        if (key === " ") key = "[SPACE]";
+        if (key.length > 1) key = `[${key}]`;
+
+        const time = new Date().toLocaleTimeString();
+        logBox.innerHTML += `${time} : ${key}<br>`;
+        logBox.scrollTop = logBox.scrollHeight;
+    });
+
+    function clearLogs() {
+        logBox.innerHTML = "";
+    }
+</script>
+
+</body>
+</html>
